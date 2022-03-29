@@ -5,6 +5,7 @@ class FinanceController {
     private $db;
 
     public function __construct($command) {
+        session_start();
         $this->command = $command;
     }
 
