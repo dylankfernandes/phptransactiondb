@@ -14,7 +14,7 @@
     });
 
     $db = new Database();
-    $db->query("INSERT INTO hw5_user VALUES (1, 'dkf5gz@virginia.edu', 'Dylan Fernandes')");
+    // $db->query("INSERT INTO hw5_user VALUES (1, 'dkf5gz@virginia.edu', 'Dylan Fernandes')");
 
     ?>
 </body>
