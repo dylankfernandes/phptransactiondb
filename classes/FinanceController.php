@@ -29,6 +29,12 @@ class FinanceController {
         session_destroy();
     }
 
+    private function checkLogin() {
+        if (!isset($_SESSION["email"])) {
+            header("Location: ?command=login");
+        }
+    }
+
     private function checkFormFieldSubmission($field) {
         return isset($_POST[$field]) && !empty($_POST[$field]);
     }
@@ -42,7 +48,7 @@ class FinanceController {
             } else if (!empty($check_for_user)) {
                 if (password_verify($_POST["password"], $check_for_user[0]["password"])) {
                     $message = "<div class='alert alert-success'>Success! Logging in...</div>";
-                    $_SESSION["name"] = $_POST["name"];
+                    $_SESSION["name"] = $check_for_user[0]["name"];
                     $_SESSION["email"] = $_POST["email"];
                     $_SESSION["id"] = $check_for_user[0]["id"];
                     header("Location: ?command=history");
@@ -56,9 +62,9 @@ class FinanceController {
                 if ($insert === false) {
                     $message = "<div class='alert alert-danger'>Error while creating new user</div>";
                 } else {
-                    $check_for_user = $this->db->query("SELECT id, password FROM dkf5gz.hw5_user WHERE email = ?;", "s", $_POST["email"]);
+                    $check_for_user = $this->db->query("SELECT id, name, password FROM dkf5gz.hw5_user WHERE email = ?;", "s", $_POST["email"]);
                     $_SESSION["id"] = $check_for_user[0]["id"];
-                    $_SESSION["name"] = $_POST["name"];
+                    $_SESSION["name"] = $check_for_user[0]["name"];
                     $_SESSION["email"] = $_POST["email"];
                     header("Location: ?command=history");
                 }
@@ -68,32 +74,51 @@ class FinanceController {
     }
 
     private function new_transaction() {
-        if (isset($_POST["amount"]) && isset($_POST["category"]) && isset($_POST["type"]) &&  isset($_POST["date"])) {
+        $this->checkLogin();
+
+        if (isset($_POST["amount"])) {
+            if ($_POST["type"] == "credit"){
             $insert = $this->db->query(
-                "INSERT INTO hw5.hw5_transaction (`user_id`, `category`, `t_type`, `t_date`, `amount`) VALUES (?, ?, ?, ?, ?);",
-                "isssd",
+                "INSERT INTO dkf5gz.hw5_transaction (user_id, name, category, t_type, t_date, amount) VALUES (?, ?, ?, ?, ?, ?);",
+                "issssd",
                 $_SESSION["id"],
+                $_POST["name"],
                 $_POST["category"],
                 $_POST["type"],
                 $_POST["date"],
                 $_POST["amount"]
             );
         }
-
-
-        include("templates/newtransaction.php");
+        else{
+            $insert = $this->db->query(
+                "INSERT INTO dkf5gz.hw5_transaction (user_id, name, category, t_type, t_date, amount) VALUES (?, ?, ?, ?, ?, ?);",
+                "issssd",
+                $_SESSION["id"],
+                $_POST["name"],
+                $_POST["category"],
+                $_POST["type"],
+                $_POST["date"],
+                -1* $_POST["amount"]
+            );
+        }
+            header("Location: ?command=history");
+            return;
+        }
+        include("templates/new-transaction.php");
     }
 
     private function history() {
+        $this->checkLogin();
+
         // pull in current balance from database
         $current_balance_data = $this->db->query("SELECT SUM(amount) as balance FROM `hw5_transaction` WHERE user_id = ?;", "i", $_SESSION["id"]);
         $current_balance = $current_balance_data[0]["balance"];
 
         // pull in totals per category from database
-        $balance_per_category_data = $this->db->query("SELECT SUM(amount) as balance, category FROM `hw5_transaction` WHERE user_id = 1 GROUP BY category;", "i", $_SESSION["id"]);
+        $balance_per_category_data = $this->db->query("SELECT SUM(amount) as balance, category FROM `hw5_transaction` WHERE user_id = ? GROUP BY category;", "i", $_SESSION["id"]);
         
         // pull in all transaction data for this user
-        $transaction_data = $this->db->query("SELECT * FROM `hw5_transaction` WHERE user_id = ?", "i", $_SESSION["id"]);
+        $transaction_data = $this->db->query("SELECT * FROM `hw5_transaction` WHERE user_id = ? ORDER BY t_date DESC;", "i", $_SESSION["id"]);
 
         include("templates/history.php");
     }

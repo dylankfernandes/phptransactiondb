@@ -24,7 +24,7 @@
                         <a class="nav-link" href="?command=history">History</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">New Transaction</a>
+                        <a class="nav-link" href="?command=newtransaction">New Transaction</a>
                     </li>
                     <li class="nav-item">
                         <a class="btn btn-danger" href="?command=logout">Logout</a>
@@ -33,7 +33,7 @@
             </div>
         </nav>
         <div class="container">
-            <p>You have $<?= $current_balance ?> in your account</p> <!-- TODO: Replace with actual balance -->
+            <p>You have $<?= $current_balance ? $current_balance : 0 ?> in your account.</p> <!-- TODO: Replace with actual balance -->
             <h2>Transaction Summary</h2>
             <table class="table">
                 <thead>
@@ -43,11 +43,10 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
                         <!-- TODO: Replace with actual transaction data -->
                         <?php
                             foreach ($balance_per_category_data as $record) {
-                                echo "<td>". $record["category"] . "</td><td>" . $record["balance"] . "</td>";
+                                echo "<tr><td>". $record["category"] . "</td><td>" . $record["balance"] . "</td></tr>";
                             }
                         ?>
                     </tr>

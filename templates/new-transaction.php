@@ -23,7 +23,7 @@
         </div>
         <div class="row justify-content-center">
             <div class="col-4">
-                <form action="?command=login" method="post">
+                <form action="?command=newtransaction" method="post">
                     <div class="mb-3">
                         <label for="name" class="form-label">Name</label>
                         <input type="text" class="form-control" id="name" name="name" />
@@ -35,11 +35,11 @@
                     <div class="mb-3">
                         <label for="date">Date:</label>
 
-                        <input type="date" id="date" name="date" value="2021-03-30" min="2022-01-01" max="2023-12-31">
+                        <input type="date" id="date" name="date" value="2022-03-30" min="2022-01-01" max="2023-12-31">
                     </div>
                     <div class="mb-3">
                         <label for="amount" class="form-label">Amount</label>
-                        <input type="amount" class="form-control" id="amount" name="amount" />
+                        <input type="number" step="0.01" class="form-control" id="amount" name="amount" />
                     </div>
                     <div class="mb-3">
                         <label for="type" class="form-label">Type</label>

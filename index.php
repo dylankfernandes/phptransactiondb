@@ -1,8 +1,8 @@
 <?php
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+// ini_set('display_errors', 1);
+// ini_set('display_startup_errors', 1);
+// error_reporting(E_ALL);
 
 // include all utility and controller classes 
 spl_autoload_register(function($classname) {
@@ -13,6 +13,10 @@ spl_autoload_register(function($classname) {
 $command = "login";
 if (isset($_GET["command"]))
     $command = $_GET["command"];
+
+// if (!isset($_SESSION)) {
+//     $command = "login";
+// }
 
 // start the session 
 if (isset($_SESSION)) {
